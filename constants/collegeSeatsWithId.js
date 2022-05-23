@@ -1,4 +1,4 @@
-const collegeSeatsWithId = {
+module.exports = {
   1: {
     general_seats: 45,
     obc_seats: 29,
@@ -118,7 +118,5 @@ const collegeSeatsWithId = {
     pwd_sc_seats: 0,
     pwd_st_seats: 0,
     pwd_ews_seats: 0,
-  }
+  },
 };
-
-module.exports = collegeSeatsWithId;
