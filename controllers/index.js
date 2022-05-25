@@ -1,5 +1,6 @@
 module.exports = {
   auth: {
+    adminLogout: require("./auth/admin/logout"),
     adminLogin: require("./auth/admin/login"),
     studentLogin: require("./auth/student/login"),
     studentLogout: require("./auth/student/logout"),
@@ -20,6 +21,7 @@ module.exports = {
     updateStudentVerifyingCollege: require("./student/updateStudentVerifyingCollege"),
     updateStudentData: require("./student/updateStudentData"),
     deleteStudent: require("./student/deleteStudent"),
+    allocate: require("./student/allocate"),
   },
   college: {
     createCollege: require("./college/createCollege"),

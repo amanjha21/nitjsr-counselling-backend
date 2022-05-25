@@ -117,8 +117,6 @@ const seatAllocation = (studentMeritList, collegeSeatsWithId) => {
   Total Remaining Unalloted Students = ${remainingStudents.length},
   `;
   console.log(summary);
-  // console.log(studentMeritList);
-
   return {
     finalAllocation,
     remainingStudents,
