@@ -1,26 +1,26 @@
-const db = require("../helpers/dbconnect");
-
-const INITIALIZE_DATABASE = async () => {
-  const dbInitQuery = `
+const INITIALIZE_DATABASE_QUERY = `
 USE ${process.env.DB_USER};
 
-use u298279946_nitJsrNimcet;
-
 SET FOREIGN_KEY_CHECKS = 0;
+
 drop table if exists admin;
 drop table if exists admin_credentials;
 drop table if exists admin_session;
 drop table if exists logger;
 drop table if exists center_incharge;
 drop table if exists chairman;
-drop table if exists colleges;
-drop table if exists result;
 drop table if exists secretary;
-drop table if exists student;
+drop table if exists colleges;
 drop table if exists notices;
 drop table if exists student_credentials;
-drop table if exists student_status;
 drop table if exists verifying_officers;
+drop table if exists student;
+drop table if exists student_attachments;
+drop table if exists student_status;
+drop table if exists result;
+drop table if exists phase_merit_list;
+drop table if exists phase_result;
+
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE admin_credentials (
@@ -53,8 +53,12 @@ CREATE TABLE colleges (
 	obc_seats int NOT NULL,
 	sc_seats int NOT NULL,
 	st_seats int NOT NULL,
-	pwd_seats int NOT NULL,
 	ews_seats int NOT NULL,
+	pwd_general_seats int NOT NULL,
+	pwd_obc_seats int NOT NULL,
+	pwd_sc_seats int NOT NULL,
+	pwd_st_seats int NOT NULL,
+	pwd_ews_seats int NOT NULL,
 	profile_image_url varchar(255) NOT NULL,
 	PRIMARY KEY (id)
 );
@@ -77,18 +81,41 @@ CREATE TABLE student (
 	regno varchar(255) NOT NULL,
 	name varchar(255) NOT NULL,
 	email varchar(255) NOT NULL UNIQUE,
-	generalRank int NOT NULL,
-	category enum('obc', 'sc', 'st', 'pwd', 'ews'),
+	generalRank int NOT NULL UNIQUE,
+	category enum("obc","sc","st","ews","pwd_general","pwd_obc","pwd_sc","pwd_st","pwd_ews"),
 	categoryRank int,
-	profile_image_url varchar(255),
+	currentSeatIndex int,
+	seatAllotmentCategory enum("obc","sc","st","ews","pwd_general","pwd_obc","pwd_sc","pwd_st","pwd_ews"),
+	mobile varchar(20) UNIQUE,
+	dob varchar(255),
+	classTenMarks varchar(10),
+	classTwelveMarks varchar(10),
+	firstYearMarks varchar(10),
+	secondYearMarks varchar(10),
+	thirdYearMarks varchar(10),
+	paymentDetails varchar(255),
+	studentAction enum("freeze","float","reject"),
+	preferences varchar(255),
+	PRIMARY KEY (regno)
+);
+
+CREATE TABLE student_attachments (
+	regno varchar(255) NOT NULL,
+	profileImage varchar(255),
+	signature varchar(255),
+	aadhaar varchar(255),
+	classTen varchar(255),
+	classTwelve varchar(255),
+	firstYear varchar(255),
+	secondYear varchar(255),
+	thirdYear varchar(255),
 	PRIMARY KEY (regno)
 );
 
 CREATE TABLE result (
 	regno varchar(255) NOT NULL,
 	college varchar(255) NOT NULL,
-	category enum('obc', 'sc', 'st', 'pwd', 'ews'),
-	status enum('accepted', 'rejected', 'pending') NOT NULL,
+	category enum("obc","sc","st","ews","pwd_general","pwd_obc","pwd_sc","pwd_st","pwd_ews"),
 	PRIMARY KEY (regno)
 );
 
@@ -101,6 +128,7 @@ CREATE TABLE student_status (
 	confirmationPending bool,
 	verifying_officer varchar(255) ,
 	verifying_college varchar(255) ,
+	categoryRejection bool,
 	PRIMARY KEY (regno)
 );
 
@@ -143,6 +171,37 @@ CREATE TABLE admin_session (
 	PRIMARY KEY (id)
 );
 
+CREATE TABLE phase_merit_list (
+	regno varchar(255) NOT NULL,
+	phase int,
+	name varchar(255) NOT NULL,
+	email varchar(255) NOT NULL UNIQUE,
+	generalRank int NOT NULL,
+	category enum("obc","sc","st","ews","pwd_general","pwd_obc","pwd_sc","pwd_st","pwd_ews"),
+	categoryRank int,
+	currentSeatIndex int,
+	seatAllotmentCategory enum("obc","sc","st","ews","pwd_general","pwd_obc","pwd_sc","pwd_st","pwd_ews"),
+	dob varchar(255),
+	mobile varchar(20),
+	classTenMarks varchar(10),
+	classTwelveMarks varchar(10),
+	firstYearMarks varchar(10),
+	secondYearMarks varchar(10),
+	thirdYearMarks varchar(10),
+	paymentDetails varchar(255),
+	studentAction enum("freeze","float","reject"),
+	preferences varchar(255),
+	PRIMARY KEY (regno)
+);
+
+CREATE TABLE phase_result (
+	regno varchar(255) NOT NULL,
+	phase INT,
+	college varchar(255) NOT NULL,
+	category enum("obc","sc","st","ews","pwd_general","pwd_obc","pwd_sc","pwd_st","pwd_ews"),
+	PRIMARY KEY (regno)
+);
+
 ALTER TABLE admin_credentials ADD CONSTRAINT admin_credentials_fk0 FOREIGN KEY (email) REFERENCES admin(email) ON DELETE CASCADE;
 
 ALTER TABLE chairman ADD CONSTRAINT chairman_fk0 FOREIGN KEY (email) REFERENCES admin(email) ON DELETE CASCADE;
@@ -159,6 +218,8 @@ ALTER TABLE result ADD CONSTRAINT result_fk0 FOREIGN KEY (regno) REFERENCES stud
 
 ALTER TABLE result ADD CONSTRAINT result_fk1 FOREIGN KEY (college) REFERENCES colleges(id) ON DELETE CASCADE;
 
+ALTER TABLE student_attachments ADD CONSTRAINT student_attachments_fk0 FOREIGN KEY (regno) REFERENCES student(regno) ON DELETE CASCADE;
+
 ALTER TABLE student_status ADD CONSTRAINT student_status_fk0 FOREIGN KEY (regno) REFERENCES student(regno) ON DELETE CASCADE;
 
 ALTER TABLE student_status ADD CONSTRAINT student_status_fk1 FOREIGN KEY (acceptedBy) REFERENCES admin(email) ON DELETE SET NULL;
@@ -174,30 +235,5 @@ ALTER TABLE student_credentials ADD CONSTRAINT student_credentials_fk0 FOREIGN K
 ALTER TABLE secretary ADD CONSTRAINT secretary_fk0 FOREIGN KEY (email) REFERENCES admin(email) ON DELETE CASCADE;
 
 `;
-  let result = { success: false, message: "" };
-  try {
-    console.log("Clearing Database...");
-    console.log("Initializing Database...");
-    await db.queryAsync(dbInitQuery);
-    console.log("Database Initialized Successfully!!");
-    result.success = true;
-  } catch (err) {
-    console.log("Failed to initialize database!!");
-    result = { success: false, message: err.message };
-  }
-  return result;
-};
+
 module.exports = INITIALIZE_DATABASE;
-
-//driver code
-
-// try {
-//   const result = await INITIALIZE_DATABASE();
-//   if (result.success) res.send("success");
-//   else res.send(result.message);
-// } catch (err) {
-//   res.status(500).send({
-//     status: false,
-//     message: "Something went wrong",
-//   });
-// }
