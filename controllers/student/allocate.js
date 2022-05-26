@@ -1,5 +1,5 @@
 const db = require("../../helpers/dbconnect");
-const seatAllocation = require("../../helpers/seatAllocation");
+const seatAllocation = require("../../helpers/seatAllocation/seatAllocation");
 const q = require("q");
 const mysql = require("mysql");
 
