@@ -15,13 +15,16 @@ module.exports = async (number = 100, categoryAfter = 6) => {
     "pwd_st",
   ];
   let data = {
-    regNo: 0,
+    regno: 0,
     generalRank: 0,
     category: "",
     categoryRank: "",
     preferences: [],
     currentSeatIndex: null,
     seatAllotmentCategory: null,
+    dob: "22/01/1999",
+    name: "aaa",
+    email: "aaa@xyz",
   };
 
   const currentCategoryRank = {
@@ -38,7 +41,7 @@ module.exports = async (number = 100, categoryAfter = 6) => {
   };
 
   for (let i = 0; i < number; i++) {
-    let regNo = i + 2;
+    let regno = i + 2;
     let generalRank = i + 1;
 
     const preferences = new Set();
@@ -51,14 +54,14 @@ module.exports = async (number = 100, categoryAfter = 6) => {
       let categoryRank = ++currentCategoryRank[category];
       x.push({
         ...data,
-        regNo,
+        regno,
         generalRank,
         category,
         categoryRank,
         preferences: [...preferences],
       });
     } else {
-      x.push({ ...data, regNo, generalRank, preferences: [...preferences] });
+      x.push({ ...data, regno, generalRank, preferences: [...preferences] });
     }
   }
   // return x;
