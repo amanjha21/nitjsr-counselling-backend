@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
   const collegeEmail = req.body.collegeEmail;
 
   try {
+    if (!image) throw new Error("All fields are required...");
     const imageUrl = await imageUploader.uploadImage(image);
 
     //check if the college has a center incharge

@@ -11,6 +11,7 @@ module.exports = async (req, res) => {
   const ip = req.header("x-forwarded-for") || req.connection.remoteAddress;
 
   try {
+    if (!image) throw new Error("All fields are required...");
     const imageUrl = await imageUploader.uploadImage(image);
 
     const centerIncharge = await db.queryAsync(
