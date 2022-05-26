@@ -61,7 +61,7 @@ const seatAllocation = (studentMeritList, collegeSeatsWithId) => {
         if (preference === generalPreference) {
           --collegeSeatsWithId[student.preferences[preference]].general_seats;
           finalAllocation.push({
-            studentRegNo: student.regNo,
+            studentRegNo: student.regno,
             allotedCollegeId: student.preferences[preference],
             category: "general",
           });
@@ -71,7 +71,7 @@ const seatAllocation = (studentMeritList, collegeSeatsWithId) => {
             `${student.category}_seats`
           ];
           finalAllocation.push({
-            studentRegNo: student.regNo,
+            studentRegNo: student.regno,
             allotedCollegeId: student.preferences[preference],
             category: student.category,
           });
@@ -84,7 +84,7 @@ const seatAllocation = (studentMeritList, collegeSeatsWithId) => {
         if (preference === generalPreference) {
           --collegeSeatsWithId[student.preferences[preference]].general_seats;
           finalAllocation.push({
-            studentRegNo: student.regNo,
+            studentRegNo: student.regno,
             allotedCollegeId: student.preferences[preference],
             category: "general",
           });
@@ -94,7 +94,7 @@ const seatAllocation = (studentMeritList, collegeSeatsWithId) => {
             `${student.category}_seats`
           ];
           finalAllocation.push({
-            studentRegNo: student.regNo,
+            studentRegNo: student.regno,
             allotedCollegeId: student.preferences[preference],
             category: student.category,
           });
