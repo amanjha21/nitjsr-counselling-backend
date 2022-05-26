@@ -6,11 +6,10 @@ module.exports = async (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
   const category = req.body.category;
-  const image = req.file;
 
   try {
     console.log(name);
-    if (!name && !email && !category && !image) {
+    if (!name && !email && !category) {
       throw new Error("Nothing to update!!");
     }
 
@@ -18,20 +17,13 @@ module.exports = async (req, res) => {
       "SELECT * FROM student WHERE regno = ?",
       [regno]
     );
-    let newImageUrl = "";
-    if (image) {
-      await imageUploader.deleteImage(student[0].profile_image_url);
-
-      newImageUrl = await imageUploader.uploadImage(image);
-    }
 
     await db.queryAsync(
-      "UPDATE student SET name = ?,email = ?,category = ?,profile_image_url = ? WHERE regno = ?",
+      "UPDATE student SET name = ?,email = ?,category = ? WHERE regno = ?",
       [
         name || student[0].name,
         email || student[0].email,
         category || student[0].category,
-        newImageUrl || student[0].profile_image_url,
         regno,
       ]
     );
